@@ -1,0 +1,638 @@
+<?php
+/* Advanced Stats on Index/Portal 3.1 Plugin File
+ * Author: Smethead (smethead@gmail.com)
+ * Date modified: 22 May 2009
+*/
+
+// Disallow direct access to this file for security reasons
+if(!defined("IN_MYBB"))
+{
+	die("Direct initialization of this file is not allowed.<br /><br />Please make sure IN_MYBB is defined.");
+}
+
+$plugins->add_hook("pre_output_page", "asoi_stats");
+$plugins->add_hook("my_date", "asoi_tomorrows_date");
+
+function asoi_info()
+{
+	return array(
+		"name"			=> "Advanced Stats on Index/Portal",
+		"description"	=> "This plugin shows more board statistics on index.php and/or portal.php.",
+		"website"		=> "",
+		"author"		=> "Smethead",
+		"authorsite"	=> "http://community.mybboard.net/user-139.html",
+		"version"		=> "3.1",
+		"guid" 			=> "8efc5f1b782f3965cc012226a8d8dcfe",
+		"compatibility" => "14*"
+	);
+}
+
+/**
+ * ADDITIONAL PLUGIN INSTALL/UNINSTALL ROUTINES
+*/
+function asoi_install()
+{
+	global $db, $lang;
+	$lang->load("asoi");
+	//INSERT CUSTOM STYLESHEET
+	$stylesheet = array(
+		"name"			=> 'asoi.css',
+		"tid"			=> 1,
+		"attachedto"	=> '',
+		"stylesheet"	=> '.asoi_i_head {\r\n	padding: 3px 3px 7px 3px;\r\n	margin-right: 3px;\r\n	cursor: pointer;\r\n	\r\n	font-size: 10px;\r\n	font-weight: bolder;\r\n}\r\n\r\n#asoi_i_body {\r\n	float:left;\r\n}\r\n\r\nimg.asoi_i_img {\r\n	width: 12px;\r\n	height: 12px;\r\n	vertical-align: middle;\r\n}\r\n\r\n',
+		"lastmodified"	=> 1242309361
+	);
+	$sid = $db->insert_query("themestylesheets", $stylesheet);
+	$db->update_query('themestylesheets', array('cachefile' => "css.php?stylesheet=".$sid), "sid='".$sid."'", 1);
+	
+	$query = $db->simple_select('themes', 'tid');
+	while($theme = $db->fetch_array($query))
+	{
+		require_once MYBB_ADMIN_DIR.'inc/functions_themes.php';
+		update_theme_stylesheet_list($theme['tid']);
+	}
+	
+	//INSERT SETTINGS
+	$query = $db->query("SELECT MAX(disporder) AS maximum FROM ".$db->table_prefix."settinggroups");
+	$bb_settings = $db->fetch_array($query);
+	$disporder = intval($bb_settings['maximum']);
+	$asoi_settinggroup = array(
+		"name"			=> "asoi",
+		"title"			=> $db->escape_string($lang->asoi_settings),
+		"description"	=> $db->escape_string($lang->asoi_settings_desc),
+		"disporder"		=> $disporder+1,
+		"isdefault"		=> 0
+	);
+	$db->insert_query("settinggroups", $asoi_settinggroup);
+	$gid = $db->insert_id();
+	$disporder = 0;
+	$asoi_settings = array(
+		array(
+			"name"			=> "asoi_type",
+			"title"			=> $db->escape_string($lang->asoi_type),
+			"description"	=> $db->escape_string($lang->asoi_type_desc),
+			"optionscode"	=> $db->escape_string("select\nclick=".$lang->asoi_click."\nhover=".$lang->asoi_hover),
+			"value"			=> "click",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_place",
+			"title"			=> $db->escape_string($lang->asoi_place),
+			"description"	=> $db->escape_string($lang->asoi_place_desc),
+			"optionscode"	=> $db->escape_string("select\nbothtop=".$lang->asoi_both_top."\nindextop=".$lang->asoi_index_top."\nportaltop=".$lang->asoi_portal_top."\nbothbottom=".$lang->asoi_both_bottom),
+			"value"			=> "portaltop",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_index_limit",
+			"title"			=> $db->escape_string($lang->asoi_index_limit),
+			"description"	=> $db->escape_string($lang->asoi_index_limit_desc),
+			"optionscode"	=> "text",
+			"value"			=> "5",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_portal_limit",
+			"title"			=> $db->escape_string($lang->asoi_portal_limit),
+			"description"	=> $db->escape_string($lang->asoi_portal_limit_desc),
+			"optionscode"	=> "text",
+			"value"			=> "5",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_mvt",
+			"title"			=> $db->escape_string($lang->asoi_show_mvt),
+			"description"	=> $db->escape_string($lang->asoi_show_mvt_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "none",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_mrt",
+			"title"			=> $db->escape_string($lang->asoi_show_mrt),
+			"description"	=> $db->escape_string($lang->asoi_show_mrt_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "both",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_nrp",
+			"title"			=> $db->escape_string($lang->asoi_show_nrp),
+			"description"	=> $db->escape_string($lang->asoi_show_nrp_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "both",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_nth",
+			"title"			=> $db->escape_string($lang->asoi_show_nth),
+			"description"	=> $db->escape_string($lang->asoi_show_nth_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "index",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_nep",
+			"title"			=> $db->escape_string($lang->asoi_show_nep),
+			"description"	=> $db->escape_string($lang->asoi_show_nep_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "index",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_top",
+			"title"			=> $db->escape_string($lang->asoi_show_top),
+			"description"	=> $db->escape_string($lang->asoi_show_top_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "both",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_tod",
+			"title"			=> $db->escape_string($lang->asoi_show_tod),
+			"description"	=> $db->escape_string($lang->asoi_show_tod_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "both",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_nmb",
+			"title"			=> $db->escape_string($lang->asoi_show_nmb),
+			"description"	=> $db->escape_string($lang->asoi_show_nmb_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "none",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_tof",
+			"title"			=> $db->escape_string($lang->asoi_show_tof),
+			"description"	=> $db->escape_string($lang->asoi_show_tof_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "both",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_rep",
+			"title"			=> $db->escape_string($lang->asoi_show_rep),
+			"description"	=> $db->escape_string($lang->asoi_show_rep_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "both",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_show_evt",
+			"title"			=> $db->escape_string($lang->asoi_show_evt),
+			"description"	=> $db->escape_string($lang->asoi_show_evt_desc),
+			"optionscode"	=> $db->escape_string("select\nboth=".$lang->asoi_both."\nindex=".$lang->asoi_index."\nportal=".$lang->asoi_portal."\nnone=".$lang->asoi_none),
+			"value"			=> "index",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_autoChange_enabled",
+			"title"			=> $db->escape_string($lang->asoi_autoChange_enabled),
+			"description"	=> $db->escape_string($lang->asoi_autoChange_enabled_desc),
+			"optionscode"	=> $db->escape_string("select\non=".$lang->asoi_enabled."\nauto=".$lang->asoi_automatic."\noff=".$lang->asoi_disabled),
+			"value"			=> "auto",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_autoChange_time",
+			"title"			=> $db->escape_string($lang->asoi_autoChange_time),
+			"description"	=> $db->escape_string($lang->asoi_autoChange_time_desc),
+			"optionscode"	=> "text",
+			"value"			=> "3",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_autoUpdate_enabled",
+			"title"			=> $db->escape_string($lang->asoi_autoUpdate_enabled),
+			"description"	=> $db->escape_string($lang->asoi_autoUpdate_enabled_desc),
+			"optionscode"	=> $db->escape_string("select\non=".$lang->asoi_enabled."\nauto=".$lang->asoi_automatic."\noff=".$lang->asoi_disabled),
+			"value"			=> "on",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		),
+		array(
+			"name"			=> "asoi_autoUpdate_time",
+			"title"			=> $db->escape_string($lang->asoi_autoUpdate_time),
+			"description"	=> $db->escape_string($lang->asoi_autoUpdate_time_desc),
+			"optionscode"	=> "text",
+			"value"			=> "30",
+			"disporder"		=> $disporder++,
+			"gid"			=> intval($gid),
+			"isdefault"		=> 0
+		)
+	);
+	$db->insert_query_multiple("settings", $asoi_settings);
+	rebuild_settings();
+}
+
+function asoi_is_installed()
+{
+		global $db;
+		$query = $db->simple_select("themestylesheets", "*", "name='asoi.css'");
+		return ($db->num_rows($query) > 0);
+}
+
+function asoi_uninstall()
+{
+	global $db;
+	//REMOVE STYLESHEET
+	$db->delete_query("themestylesheets", "name='asoi.css'");
+	$query = $db->simple_select('themes', 'tid');
+	while($theme = $db->fetch_array($query))
+	{
+		require_once MYBB_ADMIN_DIR.'inc/functions_themes.php';
+		update_theme_stylesheet_list($theme['tid']);
+	}
+	
+	//REMOVE SETTINGS
+	$db->delete_query("settinggroups", "name='asoi'");
+	$db->delete_query("settings", "name LIKE 'asoi_%'");
+	rebuild_settings();
+}
+
+function asoi_activate()
+{
+	//EDIT TEMPLATES
+	require MYBB_ROOT."/inc/adminfunctions_templates.php";
+	find_replace_templatesets("index", '#\{\$forums\}#', '<!-- ASOI_3_I_T -->{$forums}');
+	find_replace_templatesets("index_boardstats", '#\{\$forumstats\}#', '{$forumstats}<!-- ASOI_3_I_B -->');
+	find_replace_templatesets("portal", '#\{\$latestthreads\}#', '{$asoi_latestthreads}');
+	find_replace_templatesets("portal", '#</table>#', '</table><!-- ASOI_3_P_B -->');
+	find_replace_templatesets("portal", '#<table#', '<!-- ASOI_3_P_T --><table');
+}
+
+function asoi_deactivate()
+{
+	//EDIT TEMPLATES
+	require MYBB_ROOT."/inc/adminfunctions_templates.php";
+	find_replace_templatesets("index", '#<!-- ASOI_3_I_T -->#', '', 0);
+	find_replace_templatesets("index_boardstats", '#<!-- ASOI_3_I_B -->#', '', 0);
+	find_replace_templatesets("portal", '#\{\$asoi_latestthreads\}#', '{$latestthreads}', 0);
+	find_replace_templatesets("portal", '#<!-- ASOI_3_P_T -->#', '', 0);
+	find_replace_templatesets("portal", '#<!-- ASOI_3_P_B -->#', '', 0);
+}
+
+/**
+ * PLUGIN HOOKS
+*/
+
+function asoi_stats($page)
+{
+	global $db, $mybb, $lang, $theme;
+	$lang->load("asoi");
+	$index = preg_match('<!-- ASOI_3_I_[BT] -->', $page);
+	$portal = preg_match('<!-- ASOI_3_P_[BT] -->', $page);
+	if(!$index && !$portal)
+		return;
+	//DIT IS DE STANDAARD VOOR ALS ER EEN NIEUWE USER KOMT
+	if(!$mybb->cookies['asoi_run'] && $mybb->settings['asoi_autoChange_enabled'] == "auto") my_setcookie('asoi_run', "true");
+	if(!$mybb->cookies['asoi_upd'] && $mybb->settings['asoi_autoUpdate_enabled'] == "auto") my_setcookie('asoi_upd', "true");
+	if($mybb->settings['asoi_autoChange_enabled'] == "off") my_setcookie('asoi_run', "false");
+	if($mybb->settings['asoi_autoUpdate_enabled'] == "off") my_setcookie('asoi_upd', "false");
+	
+	//JAVASCRIPTS
+	$limit = ($index)?$mybb->settings['asoi_index_limit']:$mybb->settings['asoi_portal_limit'];
+	if(!$limit || $limit <= 0) $limit = 5;
+	$place = ($index)?"index":"portal";
+	$run_time = (!$mybb->settings['asoi_autoChange_time'] || $mybb->settings['asoi_autoChange_time'] <= 1)?"3":$mybb->settings['asoi_autoChange_time'];
+	$upd_time = (!$mybb->settings['asoi_autoUpdate_time'] || $mybb->settings['asoi_autoUpdate_time'] <= 1)?"30":$mybb->settings['asoi_autoUpdate_time'];
+	$script = "<script type=\"text/javascript\" src=\"jscripts/jquery.js\"></script>
+<script type=\"text/javascript\">
+<!--
+	jQuery.noConflict();
+	var asoi_place = \"".$place."\";
+	var asoi_limit = ".$limit.";
+	var asoi_run_time = ".$run_time.";
+	var asoi_upd_time = ".$upd_time.";
+	var asoi_type = \"".$mybb->settings['asoi_type']."\";
+	var asoi_loading = \"".$lang->ajax_loading."\";
+// -->
+</script>
+<script type=\"text/javascript\" src=\"jscripts/asoi.js\"></script>";
+	
+	require "asoi.php";
+	$asoi_show = false;
+	//MOST VIEWED THREADS
+	if($mybb->settings['asoi_show_mvt'] != "none")
+	{
+		$head = "<span id=\"asoi_mvt\" class=\"asoi_i_head\">".$lang->asoi_mvt."</span>";
+		$body = do_asoi("asoi_mvt", $limit);
+		if($mybb->settings['asoi_show_mvt'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_mvt") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_mvt'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_mvt") $body_portal = $body;
+		}
+	}
+	//MOST REPLIED-TO THREADS
+	if($mybb->settings['asoi_show_mrt'] != "none")
+	{
+		$head = "<span id=\"asoi_mrt\" class=\"asoi_i_head\">".$lang->asoi_mrt."</span>";
+		$body = do_asoi("asoi_mrt", $limit);
+		if($mybb->settings['asoi_show_mrt'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_mrt") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_mrt'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_mrt") $body_portal = $body;
+		}
+	}
+	//NEWEST REPLIES
+	if($mybb->settings['asoi_show_nrp'] != "none")
+	{
+		$head = "<span id=\"asoi_nrp\" class=\"asoi_i_head\">".$lang->asoi_nrp."</span>";
+		$body = do_asoi("asoi_nrp", $limit);
+		if($mybb->settings['asoi_show_nrp'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nrp") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_nrp'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nrp") $body_portal = $body;
+		}
+	}
+	//NEWEST THREADS
+	if($mybb->settings['asoi_show_nth'] != "none")
+	{
+		$head = "<span id=\"asoi_nth\" class=\"asoi_i_head\">".$lang->asoi_nth."</span>";
+		$body = do_asoi("asoi_nth", $limit);
+		if($mybb->settings['asoi_show_nth'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nth") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_nth'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nth") $body_portal = $body;
+		}
+	}
+	//NEWEST POLLS
+	if($mybb->settings['asoi_show_nep'] != "none")
+	{
+		$head = "<span id=\"asoi_nep\" class=\"asoi_i_head\">".$lang->asoi_nep."</span>";
+		$body = do_asoi("asoi_nep", $limit);
+		if($mybb->settings['asoi_show_nep'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nep") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_nth'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nep") $body_portal = $body;
+		}
+	}
+	//TOP POSTERS
+	if($mybb->settings['asoi_show_top'] != "none")
+	{
+		$head = "<span id=\"asoi_top\" class=\"asoi_i_head\">".$lang->asoi_top."</span>";
+		$body = do_asoi("asoi_top", $limit);
+		if($mybb->settings['asoi_show_top'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_top") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_top'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_top") $body_portal = $body;
+		}
+	}
+	//TODAY'S TOP POSTERS
+	if($mybb->settings['asoi_show_tod'] != "none")
+	{
+		$head = "<span id=\"asoi_tod\" class=\"asoi_i_head\">".$lang->asoi_tod."</span>";
+		$body = do_asoi("asoi_tod", $limit);
+		if($mybb->settings['asoi_show_tod'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_tod") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_tod'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_tod") $body_portal = $body;
+		}
+	}
+	//NEWEST MEMBERS
+	if($mybb->settings['asoi_show_nmb'] != "none")
+	{
+		$head = "<span id=\"asoi_nmb\" class=\"asoi_i_head\">".$lang->asoi_nmb."</span>";
+		$body = do_asoi("asoi_nmb", $limit);
+		if($mybb->settings['asoi_show_nmb'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nmb") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_nmb'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_nmb") $body_portal = $body;
+		}
+	}
+	//TOP FORUMS
+	if($mybb->settings['asoi_show_tof'] != "none")
+	{
+		$head = "<span id=\"asoi_tof\" class=\"asoi_i_head\">".$lang->asoi_tof."</span>";
+		$body = do_asoi("asoi_tof", $limit);
+		if($mybb->settings['asoi_show_tof'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_tof") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_tof'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_tof") $body_portal = $body;
+		}
+	}
+	//HIGHEST REPPED
+	if($mybb->settings['asoi_show_rep'] != "none")
+	{
+		$head = "<span id=\"asoi_rep\" class=\"asoi_i_head\">".$lang->asoi_rep."</span>";
+		$body = do_asoi("asoi_rep", $limit);
+		if($mybb->settings['asoi_show_rep'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_rep") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_rep'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_rep") $body_portal = $body;
+		}
+	}
+	//UPCOMING EVENTS
+	if($mybb->settings['asoi_show_evt'] != "none" && $mybb->settings['enablecalendar'] != 0 && $mybb->usergroup['canviewcalendar'] != 0)
+	{
+		$head = "<span id=\"asoi_evt\" class=\"asoi_i_head\">".$lang->asoi_evt."</span>";
+		$body = do_asoi("asoi_evt", $limit);
+		if($mybb->settings['asoi_show_evt'] != "portal")
+		{
+			$asoi_show_index = true;
+			$heads_index .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_evt") $body_index = $body;
+		}
+		if($mybb->settings['asoi_show_evt'] != "index")
+		{
+			$asoi_show_portal = true;
+			$heads_portal .= $head;
+			if($mybb->cookies['asoi_exp'] == "asoi_evt") $body_portal = $body;
+		}
+	}
+	for($i = 0; $i < $limit; $i++)
+		$placeholder .= "<br />";
+	if(!$body_index)
+	{
+		$body_index = $placeholder;
+		$style_back_index = " style=\"display:none;\"";
+	}
+	if(!$body_portal)
+	{
+		$body_portal = $placeholder;
+		$style_back_portal = " style=\"display:none;\"";
+	}
+	$change_img_src = ($mybb->cookies['asoi_run'] == "true")?"images/asoi_autoChangeOn.gif":"images/asoi_autoChangeOff.gif";
+	$update_img_src = ($mybb->cookies['asoi_upd'] == "true")?"images/asoi_autoUpdateOn.gif":"images/asoi_autoUpdateOff.gif";
+	if($mybb->settings['asoi_autoChange_enabled'] != "off")
+		$change_img = "<img id=\"asoi_autoChange\" class=\"asoi_i_img\" src=\"".$change_img_src."\" alt=\"\" title=\"".$lang->asoi_autoChange."\" /> ";
+	if($mybb->settings['asoi_autoUpdate_enabled'] != "off")
+		$update_img = "<img id=\"asoi_autoUpdate\" class=\"asoi_i_img\" src=\"".$update_img_src."\" alt=\"\" title=\"".$lang->asoi_autoUpdate."\" />";
+	$heads_index .= $change_img.$update_img;
+	$heads_portal .= $change_img.$update_img;
+	if($mybb->settings['asoi_place'] == "bothtop" || $mybb->settings['asoi_place'] == "indextop")
+	{
+		$pre = "<table cellspacing=\"".$theme['borderwidth']."\" cellpadding=\"".$theme['tablespace']."\" class=\"tborder\">";
+		$post = "</table><br />";
+		$replace = "<!-- ASOI_3_I_T -->";
+		$cat = "thead";
+	}
+	else
+	{
+		$replace = "<!-- ASOI_3_I_B -->";
+		$cat = "tcat";
+	}
+	if($index && $asoi_show_index) $page = str_replace($replace, $script.$pre."<tr><td class=\"".$cat."\">".$heads_index."</td></tr><tr><td class=\"trow1\" ".$style_back_index." id=\"asoi_back\"><span class=\"smalltext\" id=\"asoi_i_body\">".$body_index."</span><span class=\"smalltext\" id=\"asoi_i_placeholder\">".$placeholder."</span></td></tr>".$post, $page);
+	$replace = ($mybb->settings['asoi_place'] == "bothtop" || $mybb->settings['asoi_place'] == "portaltop")?"<!-- ASOI_3_P_T -->":"<!-- ASOI_3_P_B -->";
+	if($portal && $asoi_show_portal) $page = str_replace($replace, $script."<table cellspacing=\"".$theme['borderwidth']."\" cellpadding=\"".$theme['tablespace']."\" width=\"100%\"><tr><td>\n<table cellspacing=\"".$theme['borderwidth']."\" cellpadding=\"".$theme['tablespace']."\" class=\"tborder\">\n<tr><td class=\"thead\">".$heads_portal."</td></tr><tr><td class=\"trow1\" ".$style_back_portal." id=\"asoi_back\"><span class=\"smalltext\" id=\"asoi_i_body\">".$body_portal."</span><span class=\"smalltext\" id=\"asoi_i_placeholder\">".$placeholder."</span></td></tr>\n</table></td></tr>\n</table><br />", $page);
+	return $page;
+}
+
+function asoi_tomorrows_date($date)
+{
+	global $mybb, $lang;
+	
+	if(!$offset && $offset != '0')
+	{
+		if($mybb->user['uid'] != 0 && array_key_exists("timezone", $mybb->user))
+		{
+			$offset = $mybb->user['timezone'];
+			$dstcorrection = $mybb->user['dst'];
+		}
+		else
+		{
+			$offset = $mybb->settings['timezoneoffset'];
+			$dstcorrection = $mybb->settings['dstcorrection'];
+		}
+
+		// If DST correction is enabled, add an additional hour to the timezone.
+		if($dstcorrection == 1)
+		{
+			++$offset;
+			if(my_substr($offset, 0, 1) != "-")
+			{
+				$offset = "+".$offset;
+			}
+		}
+	}
+
+	if($offset == "-")
+	{
+		$offset = 0;
+	}
+	
+	$stamp = TIME_NOW;
+		
+	if(function_exists('adodb_date'))
+	{
+		$tomorrowsdate = adodb_date($mybb->settings['dateformat'], ($stamp + 86400) + ($offset * 3600));
+	}
+	else
+	{
+		$tomorrowsdate = gmdate($mybb->settings['dateformat'], ($stamp + 86400) + ($offset * 3600));
+	}
+
+	if($tomorrowsdate == $date)
+	{
+		$date = $lang->asoi_tomorrow;
+	}
+	return $date;
+}
+?>

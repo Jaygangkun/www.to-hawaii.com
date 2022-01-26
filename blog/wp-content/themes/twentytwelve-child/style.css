@@ -1,0 +1,30 @@
+/*
+ Theme Name:   Twentytwelve Child
+ Template:     twentytwelve
+ Text Domain:  twentytwelve-child
+*/
+
+@import url("../twentytwelve/style.css");
+/* =Theme customization starts here
+-------------------------------------------------------------- */
+
+.midpanel_row {
+    padding-left: 20px !important;
+}
+.site-content article {
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.entry-content h1, .comment-content h1, .entry-content h2, .comment-content h2, .entry-content h3, .comment-content h3, .entry-content h4, .comment-content h4, .entry-content h5, .comment-content h5, .entry-content h6, .comment-content h6 {
+    margin: 0px !important;
+}
+
+.entry-header {
+    margin-bottom: 0px !important;
+}
+
+.entry-content h1, .comment-content h1 {
+    padding-bottom: 10px !important;
+}
+

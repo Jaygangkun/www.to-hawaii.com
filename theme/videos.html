@@ -1,0 +1,352 @@
+<style type="text/css" >
+.caption {
+	width: 100%;
+	max-width: 854px;
+	margin: 0 auto;
+	padding: 20px 0;
+}
+.container {
+	width: 100%;
+	max-width: 854px;
+	min-width: 300px;
+	background: #fff;
+	margin: 0 auto;
+}
+/*  VIDEO PLAYER CONTAINER
+ 		############################### */
+  		.vid-container {
+	position: relative;
+	padding-bottom: 52%;
+	padding-top: 30px;
+	height: 0;
+}
+.vid-container iframe, .vid-container object, .vid-container embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+/*  VIDEOS PLAYLIST 
+ 		############################### */
+		.vid-list-container {
+	width: 92%;
+	overflow: hidden;
+	margin-top: 20px;
+	margin-left:4%;
+	padding-bottom: 20px;
+}
+.vid-list {
+	width: 6544px;
+	position: relative;
+	top:0;
+	left: 0;
+}
+.vid-item {
+	display: block;
+	width: 148px;
+	height: 148px;
+	float: left;
+	margin: 0;
+	padding: 10px;
+}
+.thumb-video {
+	/*position: relative;*/
+			overflow:hidden;
+	height: 72px;
+}
+.thumb-video img {
+	width: 100%;
+	position: relative;
+	top: -12px;
+}
+.vid-item .desc {
+	color: #B06121;
+	font-size: 15px;
+	margin-top:5px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight:bold;
+}
+.vid-item:hover {
+	background: #eee;
+	cursor: pointer;
+}
+.arrows {
+	position:relative;
+	width: 100%;
+}
+.arrow-left {
+	color: #fff;
+	position: absolute;
+	background: #00B302;
+	padding: 15px;
+	left: -25px;
+	top: -130px;
+	z-index: 99;
+	cursor: pointer;
+}
+.arrow-right {
+	color: #fff;
+	position: absolute;
+	background: #00B302;
+	padding: 15px;
+	right: -25px;
+	top: -130px;
+	z-index:100;
+	cursor: pointer;
+}
+.arrow-left:hover {
+	background: #CC181E;
+}
+.arrow-right:hover {
+	background: #CC181E;
+}
+ @media (max-width: 624px) {
+ .caption {
+ margin-top: 40px;
+}
+ .vid-list-container {
+ padding-bottom: 20px;
+}
+
+			/* reposition left/right arrows */
+			.arrows {
+ position:relative;
+ margin: 0 auto;
+ width:96px;
+}
+ .arrow-left {
+ left: 0;
+ top: -10px;
+}
+ .arrow-right {
+ right: 0;
+ top: -10px;
+}
+}
+.fa {
+	display:inline-block;
+	font-family:FontAwesome;
+	font-style:normal;
+	font-weight:normal;
+	line-height:1;
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:grayscale
+}
+.fa-chevron-right:before {
+	content:"\25b6"
+}
+.fa-chevron-left:before {
+	content:"\25c0"
+}
+.fa-lg {
+	font-size:1.3333333333333333em;
+	line-height:.75em;
+	vertical-align:-15%
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<div class="container">
+  <!-- THE YOUTUBE PLAYER -->
+  <div class="vid-container">
+    <iframe id="vid_frame" src="https://www.youtube.com/embed/mbktx4C0ij8?rel=0&showinfo=0&autohide=1" frameborder="0" width="560" height="315"></iframe>
+  </div>
+  <!-- THE PLAYLIST -->
+  <div class="vid-list-container">
+    <div class="vid-list">
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/mbktx4C0ij8?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/mbktx4C0ij8/0.jpg" alt="" /></div>
+        <div class="desc">Driving in Waikoloa Beach Resort, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/gIsALE9xeZE?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/gIsALE9xeZE/0.jpg" alt="" /></div>
+        <div class="desc">Kikaua Point Beach, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/SwyyLDNh6ms?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/SwyyLDNh6ms/0.jpg" alt="" /></div>
+        <div class="desc">Kealakekua Bay, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/-MW0Wl6pATY?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/-MW0Wl6pATY/0.jpg" alt="" /></div>
+        <div class="desc">Kealakekua Bay, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/rYyOWf-tC8c?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/rYyOWf-tC8c/0.jpg" alt="" /></div>
+        <div class="desc">Puako Petroglyphs, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/UuUKPBa4uf4?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/UuUKPBa4uf4/0.jpg" alt="" /></div>
+        <div class="desc">Waikoloa Lakeside Trail, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/48l2yRW5-aU?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/48l2yRW5-aU/0.jpg" alt="" /></div>
+        <div class="desc">Waikoloa Beach Resort Sunset, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/s34Io6hIzhU?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/s34Io6hIzhU/0.jpg" alt="" /></div>
+        <div class="desc">Mauna Kea Beach, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/6UyD678gxes?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/6UyD678gxes/0.jpg" alt="" /></div>
+        <div class="desc">Spencer Beach Park, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/Y9lqHwBWU8k?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/Y9lqHwBWU8k/0.jpg" alt="" /></div>
+        <div class="desc">Paako Beach, Maui </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/zfKNdgmsK58?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/zfKNdgmsK58/0.jpg" alt="" /></div>
+        <div class="desc">Wailea Alanui Dr, Maui </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/99xK6l-01Ps?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/99xK6l-01Ps/0.jpg" alt="" /></div>
+        <div class="desc">Maluaka Beach sunset, Maui </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/oM8Q3Sbzkh0?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/oM8Q3Sbzkh0/0.jpg" alt="" /></div>
+        <div class="desc">Makena Landing Beach, Maui </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/G1OxquFERMU?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/G1OxquFERMU/0.jpg" alt="" /></div>
+        <div class="desc">Turtle Bay Beach, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/oPCRKuDflPI?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/oPCRKuDflPI/0.jpg" alt="" /></div>
+        <div class="desc">Pali Lookout, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/ZkeIXhe0ERw?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/ZkeIXhe0ERw/0.jpg" alt="" /></div>
+        <div class="desc">Papaiola Beach, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/_hEFMRNeR0E?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/_hEFMRNeR0E/0.jpg" alt="" /></div>
+        <div class="desc">Lanai Lookout, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/dt9yeVFSjiU?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/dt9yeVFSjiU/0.jpg" alt="" /></div>
+        <div class="desc">Waimea Falls, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/WQTy3_VahNI?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/WQTy3_VahNI/0.jpg" alt="" /></div>
+        <div class="desc">Waimea Valley, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/kVG5nybf0uM?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/kVG5nybf0uM/0.jpg" alt="" /></div>
+        <div class="desc">Papohaku Beach, Molokai</div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/NsjPcOTdVAo?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/NsjPcOTdVAo/0.jpg" alt="" /></div>
+        <div class="desc">Kepuhi Beach and Kaluakoi Resort, Molokai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/Sxar2VXpHDM?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/Sxar2VXpHDM/0.jpg" alt="" /></div>
+        <div class="desc">Kepuhi Beach, Molokai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/r-px1oImvzg?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/r-px1oImvzg/0.jpg" alt="" /></div>
+        <div class="desc">Kamehameha V Hwy Mile 20 to 22, Molokai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/QtUuy_cYhJU?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/QtUuy_cYhJU/0.jpg" alt="" /></div>
+        <div class="desc">Pohakumauliuli Beach, Molokai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/WrHP0RRSIfM?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/WrHP0RRSIfM/0.jpg" alt="" /></div>
+        <div class="desc">Sandy Beach, Molokai</div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/YL8Eymbelak?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/YL8Eymbelak/0.jpg" alt="" /></div>
+        <div class="desc">Kalaupapa, Molokai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/vOvqXYqOpR4?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/vOvqXYqOpR4/0.jpg" alt="" /></div>
+        <div class="desc">Kapuaiwa Grove, Molokai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/7N8HNYeFuoo?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/7N8HNYeFuoo/0.jpg" alt="" /></div>
+        <div class="desc">Puu Ualakaa State Park, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/ATnQRhgYHtk?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/ATnQRhgYHtk/0.jpg" alt="" /></div>
+        <div class="desc">High surf on Magic Island, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/Cv4CEo2f7e0?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/Cv4CEo2f7e0/0.jpg" alt="" /></div>
+        <div class="desc">Lyon Arboretum, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/BZBcT-HMED8?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/BZBcT-HMED8/0.jpg" alt="" /></div>
+        <div class="desc">Olomana - Ku'u Home O Kahalu'u, Tapa Bar at Waikiki</div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/92XOiCWISgg?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/92XOiCWISgg/0.jpg" alt="" /></div>
+        <div class="desc">Kaaawa Valley, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/sUGzbgCEsW0?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/sUGzbgCEsW0/0.jpg" alt="" /></div>
+        <div class="desc">Mackenzie State Park, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/mNQeFMIUr9c?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/mNQeFMIUr9c/0.jpg" alt="" /></div>
+        <div class="desc">Kapoho Tide Pools, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/yPdHdokSULw?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/yPdHdokSULw/0.jpg" alt="" /></div>
+        <div class="desc">Kapoho Kalapana Road 137, Big Island</div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/2KiX0Sgr0TE?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/2KiX0Sgr0TE/0.jpg" alt="" /></div>
+        <div class="desc">Rainbow Falls, Big Island </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/AEdqiiwZEWQ?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/AEdqiiwZEWQ/0.jpg" alt="" /></div>
+        <div class="desc">Flying from Honolulu to Hilo with Hawaiian Air Flight 342 </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/9WgkSLK2sEU?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/9WgkSLK2sEU/0.jpg" alt="" /></div>
+        <div class="desc">Magic Island, Oahu </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/BfIesTnJl4I?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/BfIesTnJl4I/0.jpg" alt="" /></div>
+        <div class="desc">Puu Poa Beach, Kauai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/ZcmcoyIBWsQ?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/ZcmcoyIBWsQ/0.jpg" alt="" /></div>
+        <div class="desc">Kauai waterfalls seen from Hanalei Bay Resort </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/HTdgbUHLCcs?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/HTdgbUHLCcs/0.jpg" alt="" /></div>
+        <div class="desc">Wailua River, Kauai </div>
+      </div>
+      <div class="vid-item" onClick="document.getElementById('vid_frame').src='https://www.youtube.com/embed/ZX0JWi4z92E?autoplay=1&rel=0&showinfo=0&autohide=1'">
+        <div class="thumb-video"><img src="https://img.youtube.com/vi/ZX0JWi4z92E/0.jpg" alt="" /></div>
+        <div class="desc">Opaekaa Falls, Kauai </div>
+      </div>
+    </div>
+  </div>
+  <!-- LEFT AND RIGHT ARROWS -->
+  <div class="arrows">
+    <div class="arrow-left"><i class="fa fa-chevron-left fa-lg"></i></div>
+    <div class="arrow-right"><i class="fa fa-chevron-right fa-lg"></i></div>
+  </div>
+</div>
+<br />
+<br />
+<div style="clear:both"></div>
+<!-- JS FOR SCROLLING THE ROW OF thumb-videoNAILS -->
+<script type="text/javascript">
+  		$(document).ready(function () {
+		    $(".arrow-right").bind("click", function (event) {
+		        event.preventDefault();
+		        $(".vid-list-container").stop().animate({
+		            scrollLeft: "+=336"
+		        }, 750);
+		    });
+		    $(".arrow-left").bind("click", function (event) {
+		        event.preventDefault();
+		        $(".vid-list-container").stop().animate({
+		            scrollLeft: "-=336"
+		        }, 750);
+		    });
+		});
+  	</script>

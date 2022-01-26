@@ -1,0 +1,9 @@
+[08-Jul-2021 22:47:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysql_connect() in /home/tohawaii/public_html/cronfiles/inf_priceinfoupdate.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/tohawaii/public_html/cronfiles/inf_priceinfoupdate.php on line 3
+[08-Jul-2021 22:47:59 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysql_connect() in /home/tohawaii/public_html/cronfiles/inf_priceinfoupdate.php:3
+Stack trace:
+#0 {main}
+  thrown in /home/tohawaii/public_html/cronfiles/inf_priceinfoupdate.php on line 3
+[08-Jul-2021 22:48:22 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/tohawaii/public_html/cronfiles/inf_priceinfoupdate.php on line 3

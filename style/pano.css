@@ -1,0 +1,95 @@
+@media only screen and (min-width:320px) and (max-width: 2500px) {
+ .panophotos {
+width: 100%
+}
+}
+ @media (max-width: 950px) {
+ .morephotos {
+width: 100%;
+max-width: 600px;
+}
+}
+H1 {
+	color: #B06121;
+	text-shadow: 1px 1px 1px #000;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size: 2em;
+}
+ @media (max-width: 950px) {
+ .photos800 {
+width: 100%;
+max-width: 800px;
+}
+ .photos283 {
+width: 100%;
+max-width: 283px;
+}
+ .photos332 {
+width: 100%;
+max-width: 332px;
+}
+ .photos400 {
+width: 100%;
+max-width: 400px;
+}
+.photos415 {
+width: 100%;
+max-width: 415px;
+}
+.photos440 {
+width: 100%;
+max-width: 440px;
+}
+.photos450 {
+width: 100%;
+max-width: 450px;
+}
+ .photos465 {
+width: 100%;
+max-width: 465px;
+}
+ .photos478 {
+width: 100%;
+max-width: 478px;
+}
+.photos300 {
+width: 100%;
+max-width: 300px;
+}
+.photos320 {
+width: 100%;
+max-width: 320px;
+}
+.photos500 {
+width: 100%;
+max-width: 500px;
+}
+.photos850 {
+width: 100%;
+max-width: 850px;
+}
+.photos382 {
+width: 100%;
+max-width: 382px;
+}
+.photos1000 {
+width: 100%;
+max-width: 1000px;
+}
+.photos700 {
+width: 100%;
+max-width: 700px;
+}
+.photos600 {
+width: 100%;
+max-width: 600px;
+}
+.photos650 {
+width: 100%;
+max-width: 650px;
+}
+.photos327 {
+width: 100%;
+max-width: 327px;
+}
+}

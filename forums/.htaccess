@@ -1,0 +1,16 @@
+RewriteEngine on  
+RewriteBase /forums/
+RewriteRule ^([^&]*)&(.*)$ https://www.to-hawaii.com/forums/$1?$2 [L,QSA,R=301]
+RewriteRule ^sitemap-([^./]+)\.xml$ misc.php?google_seo_sitemap=$1 [L,QSA,NC]
+RewriteRule ^Forum-([^./]+)$ forumdisplay.php?google_seo_forum=$1 [L,QSA,NC]
+RewriteRule ^Thread-([^./]+)$ showthread.php?google_seo_thread=$1 [L,QSA,NC]
+RewriteRule ^Announcement-([^./]+)$ announcements.php?google_seo_announcement=$1 [L,QSA,NC]
+RewriteRule ^User-([^./]+)$ member.php?action=profile&google_seo_user=$1 [L,QSA,NC]
+RewriteRule ^Calendar-([^./]+)$ calendar.php?google_seo_calendar=$1 [L,QSA,NC]
+RewriteRule ^Event-([^./]+)$ calendar.php?action=event&google_seo_event=$1 [L,QSA,NC]
+ErrorDocument 404 /forums/
+
+RewriteEngine On 
+RewriteCond %{SERVER_PORT} 80 
+RewriteCond %{REQUEST_URI} forums
+RewriteRule ^(.*)$ https://www.to-hawaii.com/forums/$1 [R=301,L]
